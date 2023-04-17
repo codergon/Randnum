@@ -77,7 +77,7 @@ const WalletConnectModal = ({ closeConnectModal }) => {
                   >
                     <div className="tooltip">
                       <p>
-                        My Ago wallet was hacked recently
+                        My Algo wallet was hacked recently
                         <br />
                         and it is currently unsafe to use
                       </p>

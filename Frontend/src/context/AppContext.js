@@ -89,32 +89,41 @@ export default function AppProvider({ children }) {
   // Filter bets by search
   useEffect(() => {
     if (search) {
-      const filtered = data?.filter(bet => {
-        return (
-          bet?._id?.toLowerCase().includes(search) ||
-          _.values(_.omit(bet?.gameParams, ["_id"])).filter(txt => {
-            return typeof txt === "string" || typeof txt === "number"
-              ? (txt + "")
-                  .toLowerCase()
-                  ?.includes(search?.toLowerCase()?.trim())
-              : false;
-          }).length > 0 ||
-          (!isNaN(bet?.gameParams?.withdrawalStart) &&
-            dayjs(Number(bet?.gameParams?.withdrawalStart) * 1000)
-              .format(
-                isToday(
-                  new Date(Number(bet?.gameParams?.withdrawalStart) * 1000)
+      const filtered = data
+        ?.filter(bet => {
+          return (
+            bet?._id?.toLowerCase().includes(search) ||
+            _.values(_.omit(bet?.gameParams, ["_id"])).filter(txt => {
+              return typeof txt === "string" || typeof txt === "number"
+                ? (txt + "")
+                    .toLowerCase()
+                    ?.includes(search?.toLowerCase()?.trim())
+                : false;
+            }).length > 0 ||
+            (!isNaN(bet?.gameParams?.withdrawalStart) &&
+              dayjs(Number(bet?.gameParams?.withdrawalStart) * 1000)
+                .format(
+                  isToday(
+                    new Date(Number(bet?.gameParams?.withdrawalStart) * 1000)
+                  )
+                    ? "HH:mm"
+                    : "HH:mm, MMM DD"
                 )
-                  ? "HH:mm"
-                  : "HH:mm, MMM DD"
-              )
-              ?.toLowerCase()
-              ?.includes(search.toLowerCase().trim()))
+                ?.toLowerCase()
+                ?.includes(search.toLowerCase().trim()))
+          );
+        })
+        .sort((a, b) =>
+          a?.gameParams?.withdrawalStart > b?.gameParams?.withdrawalStart
+            ? -1
+            : 0
         );
-      });
       setFilteredBetsHistory(filtered);
     } else {
-      setFilteredBetsHistory(data);
+      const sorted = data?.sort((a, b) =>
+        a?.gameParams?.withdrawalStart > b?.gameParams?.withdrawalStart ? -1 : 0
+      );
+      setFilteredBetsHistory(sorted);
     }
   }, [search, data]);
 

@@ -113,32 +113,41 @@ export default function ProfileProvider({ children }) {
   // Filter the bets history
   useEffect(() => {
     if (search) {
-      const filtered = profileData?.filter(bet => {
-        return (
-          _.values(_.omit(bet?.lottoParams, ["_id"])).filter(txt => {
-            return typeof txt === "string" || typeof txt === "number"
-              ? (txt + "")
-                  .toLowerCase()
-                  ?.includes(search?.toLowerCase()?.trim())
-              : false;
-          }).length > 0 ||
-          (!isNaN(bet?.lottoParams?.withdrawalStart) &&
-            dayjs(Number(bet?.lottoParams?.withdrawalStart) * 1000)
-              .format(
-                isToday(
-                  new Date(Number(bet?.lottoParams?.withdrawalStart) * 1000)
+      const filtered = profileData
+        ?.filter(bet => {
+          return (
+            _.values(_.omit(bet?.lottoParams, ["_id"])).filter(txt => {
+              return typeof txt === "string" || typeof txt === "number"
+                ? (txt + "")
+                    .toLowerCase()
+                    ?.includes(search?.toLowerCase()?.trim())
+                : false;
+            }).length > 0 ||
+            (!isNaN(bet?.lottoParams?.withdrawalStart) &&
+              dayjs(Number(bet?.lottoParams?.withdrawalStart) * 1000)
+                .format(
+                  isToday(
+                    new Date(Number(bet?.lottoParams?.withdrawalStart) * 1000)
+                  )
+                    ? "HH:mm"
+                    : "HH:mm, MMM DD"
                 )
-                  ? "HH:mm"
-                  : "HH:mm, MMM DD"
-              )
-              ?.toLowerCase()
-              ?.includes(search.toLowerCase().trim()))
+                ?.toLowerCase()
+                ?.includes(search.toLowerCase().trim()))
+          );
+        })
+        .sort((a, b) =>
+          a?.gameParams?.withdrawalStart > b?.gameParams?.withdrawalStart
+            ? -1
+            : 0
         );
-      });
 
       setFilteredProfileData(filtered);
     } else {
-      setFilteredProfileData(profileData);
+      const sorted = profileData?.sort((a, b) =>
+        a?.gameParams?.withdrawalStart > b?.gameParams?.withdrawalStart ? -1 : 0
+      );
+      setFilteredProfileData(sorted);
     }
   }, [search, profileData]);
 
