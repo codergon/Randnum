@@ -21,6 +21,10 @@ const LottoDetails = ({ data, phase, withdrawalStart }) => {
                     ? "Tickets Bought"
                     : key === "playersTicketChecked"
                     ? "Tickets Checked"
+                    : key === "withdrawalStart"
+                    ? phase === "withdrawal"
+                      ? "Withdrawal Started"
+                      : "Withdrawal Starts"
                     : key?.split(/(?=[A-Z])/).join(" ")}
                 </p>
 
@@ -51,7 +55,7 @@ const LottoDetails = ({ data, phase, withdrawalStart }) => {
                         textTransform: "capitalize",
                       }}
                     >
-                      {phase}
+                      {phase === "waiting" ? "Game starts soon" : phase}
                     </p>
                   </div>
                 )}
@@ -60,11 +64,22 @@ const LottoDetails = ({ data, phase, withdrawalStart }) => {
 
           {!isNaN(data?.ticketingStart) && !isNaN(data?.ticketingDuration) && (
             <li className="bet-details__list-item">
-              <p className="key">Ticketing Ends</p>
+              <p className="key">
+                Ticketing
+                {phase === "waiting"
+                  ? " Starts"
+                  : phase === "ticketing"
+                  ? " Ends"
+                  : " Ended"}
+              </p>
 
               <p className="value">
                 {dayjs(
-                  Number(data?.ticketingStart + data?.ticketingDuration) * 1000
+                  Number(
+                    phase === "waiting"
+                      ? data?.ticketingStart
+                      : data?.ticketingStart + data?.ticketingDuration
+                  ) * 1000
                 ).format("HH:mm, MMM DD")}
               </p>
             </li>

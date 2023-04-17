@@ -92,9 +92,8 @@ const ProfileTable = () => {
               const wonBet = bet?.lottoParams?.luckyNumber === numGuessed;
 
               const playedGame =
-                bet?.userInteractions.filter(
-                  act => act.action !== "initiliaze_game_params"
-                )?.length > 0;
+                bet?.userInteractions.filter(act => act.action === "enter_game")
+                  ?.length > 0;
 
               return (
                 <div
@@ -141,17 +140,18 @@ const ProfileTable = () => {
                   </div>
 
                   <div className="app-table__row__item amt">
-                    {!!bet?.lottoParams?.ticketFee ? (
-                      <p
-                        className={`indicator indicator-${
-                          wonBet ? "success" : "failed"
-                        }`}
-                      >
-                        {wonBet ? "Won" : "Lost"}
-                      </p>
-                    ) : (
-                      <p className="indicator indicator-pending">Pending</p>
-                    )}
+                    {playedGame &&
+                      (!!bet?.lottoParams?.ticketFee ? (
+                        <p
+                          className={`indicator indicator-${
+                            wonBet ? "success" : "failed"
+                          }`}
+                        >
+                          {wonBet ? "Won" : "Lost"}
+                        </p>
+                      ) : (
+                        <p className="indicator indicator-pending">Pending</p>
+                      ))}
                   </div>
 
                   <div className="app-table__row__item date">

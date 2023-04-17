@@ -71,17 +71,15 @@ export default function ProfileProvider({ children }) {
       let totalAmountSpent = 0;
       let totalGamesPlayed = 0;
 
-      profileData?.forEach((bet, index) => {
+      profileData?.forEach(bet => {
         const numGuessed = bet?.userInteractions
           .filter(act => act.action === "enter_game")
           ?.sort((a, b) => a?.round - b?.round)[0]?.value;
         const wonBet = bet?.lottoParams?.luckyNumber === numGuessed;
 
         const playedGame = bet?.userInteractions.filter(
-          act => act.action !== "initiliaze_game_params"
+          act => act.action === "enter_game"
         )?.length;
-
-        console.log(playedGame, index);
 
         if (playedGame > 0) {
           totalGamesPlayed = totalGamesPlayed + 1;

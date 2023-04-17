@@ -26,8 +26,6 @@ const Lotto = () => {
         .get(`/currentGameParams`)
         .then(response => response?.data?.data);
 
-      console.log(message, newData);
-
       if (!!newData) {
         setError(undefined);
         if (!_.isEqual(data, newData)) {
@@ -48,27 +46,43 @@ const Lotto = () => {
   }, 15000);
 
   useEffect(() => {
+    // Check if ticketing is waiting
+    const isWaiting = dayjs(Date.now()).isBefore(
+      data?.ticketingStart * 1000,
+      "milliseconds",
+      "[)"
+    );
+    if (isWaiting) {
+      setPhase("waiting");
+      return;
+    }
+
+    // Check if ticketing is active
     const isTicketing = dayjs(Date.now()).isBetween(
       data?.ticketingStart * 1000,
       (data?.ticketingStart + data?.ticketingDuration) * 1000,
       "milliseconds",
       "[)"
     );
+    if (isTicketing) {
+      setPhase("ticketing");
+      return;
+    }
 
+    // Check if game is live
     const isLive = dayjs(Date.now()).isBetween(
       (data?.ticketingStart + data?.ticketingDuration) * 1000,
       data?.withdrawalStart * 1000,
       "milliseconds",
       "[)"
     );
-
-    if (isTicketing) {
-      setPhase("ticketing");
-    } else if (isLive) {
+    if (isLive) {
       setPhase("live");
-    } else {
-      setPhase("withdrawal");
+      return;
     }
+
+    // Check if game is over
+    setPhase("withdrawal");
   }, [data]);
 
   return (

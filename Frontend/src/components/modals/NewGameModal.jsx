@@ -67,14 +67,15 @@ const NewGameModal = ({ closeNewGameModal, refetchCurrentGame }) => {
           : 7200)
     ) +
     (withdrawalStart === "15 minutes after"
-      ? 900
+      ? 950
       : withdrawalStart === "1 hour after"
       ? 3600
       : withdrawalStart === "2 hours after"
       ? 7200
       : withdrawalStart === "3 hours after"
       ? 10800
-      : 14400);
+      : 14400) +
+    (durationType === "m" ? ticketingDuration * 60 : ticketingDuration * 3600);
 
   const startNewGame = async () => {
     if (acctBalance < gameCost) {

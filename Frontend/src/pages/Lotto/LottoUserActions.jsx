@@ -25,7 +25,7 @@ const LottoUserActions = ({
   const [winStatus, setWinStatus] = useState(null);
   const [loadingState, setLoadingState] = useState("");
   const [StartGameModal, closeNewGameModal, openNewGameModal] = useAppModal(
-    !true
+    !!true
   );
 
   const { data, isLoading, refetch } = useQuery(
