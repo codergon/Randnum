@@ -4,8 +4,6 @@ import asalist from "../../constants/assets";
 const LottoDetails = ({ data, phase, asset }) => {
   const dateProperties = ["ticketingStart", "withdrawalStart"];
 
-  const assetImg = asalist[Number(data.asset ?? 0)]?.logo?.svg;
-
   return (
     <>
       <div className="lotto-page__details">
@@ -33,8 +31,12 @@ const LottoDetails = ({ data, phase, asset }) => {
 
                   {key === "ticketFee" ? (
                     <div className="amount-value">
-                      {asset && <p>lovely</p>}
-                      <img src={assetImg} alt="game asset" />
+                      <img
+                        src={
+                          asalist[Number(data.asset || asset || 0)]?.logo?.svg
+                        }
+                        alt="game-asset"
+                      />
                       <p className="value">{data[key] / 1e6}</p>
                     </div>
                   ) : key === "ticketingDuration" ? (

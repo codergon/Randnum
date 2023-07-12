@@ -122,13 +122,13 @@ const Lotto = () => {
                     "ticketingDuration"
                   ),
                 }}
+                asset={data?.game_asset}
                 withdrawalStart={data?.withdrawalStart}
               />
 
               <LottoDetails
                 phase={phase}
                 data={{
-                  asset: data.game_asset,
                   luckyNumber: data?.luckyNumber,
                   maxGuessNumber: data?.maxGuessNumber,
                   "current-phase":
