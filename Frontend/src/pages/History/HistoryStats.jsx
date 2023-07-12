@@ -51,7 +51,6 @@ const HistoryStats = () => {
               </h2>
             ) : (
               <>
-                <Icon.Algo />
                 <h2>
                   {!isNaN(ticketSold) &&
                     millify(ticketSold, {

@@ -39,6 +39,10 @@ const LottoDetails = ({ data, phase, asset }) => {
                       />
                       <p className="value">{data[key] / 1e6}</p>
                     </div>
+                  ) : key === "asset" ? (
+                    <p className="value">
+                      {asalist[Number(data.asset || asset || 0)]?.name}
+                    </p>
                   ) : key === "ticketingDuration" ? (
                     <p className="value">{data[key] / 60 + " min"}</p>
                   ) : dateProperties.includes(key) ? (

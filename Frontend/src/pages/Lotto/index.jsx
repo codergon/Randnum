@@ -121,6 +121,7 @@ const Lotto = () => {
                     "ticketingStart",
                     "ticketingDuration"
                   ),
+                  asset: data?.game_asset,
                 }}
                 asset={data?.game_asset}
                 withdrawalStart={data?.withdrawalStart}
