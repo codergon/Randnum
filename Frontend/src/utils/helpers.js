@@ -1,7 +1,6 @@
 import { isValidAddress } from "algosdk";
-import axios from "axios";
 import avatars from "../assets/avatars";
-import { ALGOD_CLIENT } from "./constants";
+import { ALGOD_CLIENT } from "../constants";
 
 const randAvatar = index => avatars[index];
 
@@ -18,14 +17,20 @@ const constrictAddr = (address, start = 5, end = 5) => {
 export async function getMinAmountToStartGame(
   ticketFee,
   win_multiplier,
-  max_players_allowed
+  max_players_allowed,
+  assetId = 0
 ) {
-  const appAddr = "ROJM7BEKK7X6HVMQONMFFXB4PLOSAKLFFC5SGU4EQJIPUC5A4XB3YIMF7I";
+  const appAddr = "JPZNEEIOUSI2XDG37E2JX676HPPCNYILJXD53U63YUNIEOYIOAFDIOKJ4U";
   const appAccountInfo = await ALGOD_CLIENT["testnet"]
     .accountInformation(appAddr)
     .do();
+
   const appSpendableBalance =
-    appAccountInfo.amount - appAccountInfo["min-balance"];
+    assetId === 0
+      ? appAccountInfo.amount - appAccountInfo["min-balance"]
+      : appAccountInfo?.assets?.find(
+          asset => Number(asset["asset-id"]) === Number(assetId)
+        )?.amount ?? 0;
 
   const minAmountToStartGame =
     (win_multiplier - 1) * max_players_allowed * ticketFee -
@@ -38,11 +43,26 @@ const getBalance = async address => {
   if (!isValidAddress(address)) return 0;
 
   try {
-    const balance = await axios
-      .get(`https://node.testnet.algoexplorerapi.io/v2/accounts/${address}`)
-      .then(res => res?.data?.amount / 1e6);
+    const data = await ALGOD_CLIENT["testnet"].accountInformation(address).do();
 
-    return balance;
+    const assets = {};
+    data?.assets
+      ?.filter(asset => !asset["is-frozen"])
+      .map(
+        asset =>
+          (assets[asset["asset-id"]] =
+            isNaN(asset.amount) ||
+            asset.amount === Infinity ||
+            asset.amount === -Infinity ||
+            asset.amount === 0
+              ? 0
+              : asset.amount / 1e6)
+      );
+
+    return {
+      ...assets,
+      0: data.amount / 1e6,
+    };
   } catch (error) {
     console.log(error);
     return 0;

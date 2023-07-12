@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { isToday } from "../../helpers/date";
 import { constrictAddr } from "../../utils/helpers";
 import { useEffect, useRef, useState } from "react";
+import asalist from "../../constants/assets";
 
 const TableRow = ({ betItem, openSideModal }) => {
   const { gameParams: bet, ...betDetails } = betItem;
@@ -33,6 +34,8 @@ const TableRow = ({ betItem, openSideModal }) => {
 
   const btnRef = useRef(null);
   const linkRef = useRef(null);
+
+  // console.log(bet?.game_asset);
 
   return (
     <div
@@ -76,7 +79,17 @@ const TableRow = ({ betItem, openSideModal }) => {
       <div className="app-table__row__item amt">
         {!isNaN(bet?.ticketFee / 1e6) ? (
           <>
-            <Icon.AlgoRound />
+            {!isNaN(bet?.game_asset) &&
+              (asalist[Number(bet?.game_asset)]?.logo?.svg ||
+                asalist[Number(bet?.game_asset)]?.logo?.png) && (
+                <img
+                  src={
+                    asalist[Number(bet?.game_asset)]?.logo?.svg ??
+                    asalist[Number(bet?.game_asset)]?.logo?.png
+                  }
+                  alt=""
+                />
+              )}
             <p>{bet?.ticketFee / 1e6}</p>
           </>
         ) : (

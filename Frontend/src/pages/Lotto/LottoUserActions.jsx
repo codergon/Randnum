@@ -24,9 +24,8 @@ const LottoUserActions = ({
   const walletAddr = useRecoilValue(addressAtom);
   const [winStatus, setWinStatus] = useState(null);
   const [loadingState, setLoadingState] = useState("");
-  const [StartGameModal, closeNewGameModal, openNewGameModal] = useAppModal(
-    !true
-  );
+  const [StartGameModal, closeNewGameModal, openNewGameModal] =
+    useAppModal(false);
 
   const { data, isLoading, refetch } = useQuery(
     "getPlayerGuessNumber",
@@ -39,7 +38,7 @@ const LottoUserActions = ({
 
   const refetchDetails = async () => {
     await refetch();
-    await refetchCurrentGame("Refetching amount of tickets bought");
+    await refetchCurrentGame("");
   };
 
   useEffect(() => {

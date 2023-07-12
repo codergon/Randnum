@@ -128,12 +128,14 @@ const Lotto = () => {
               <LottoDetails
                 phase={phase}
                 data={{
+                  asset: data.game_asset,
                   luckyNumber: data?.luckyNumber,
                   maxGuessNumber: data?.maxGuessNumber,
                   "current-phase":
                     data?.ticketingStart + data?.ticketingDuration,
-                  ..._.pick(data, "playersTicketChecked", "withdrawalStart"),
+                  ..._.pick(data, "withdrawalStart", "playersTicketChecked"),
                 }}
+                asset={data?.game_asset}
               />
             </>
           )

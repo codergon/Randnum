@@ -28,7 +28,9 @@ export default function AppProvider({ children }) {
   const [search, setSearch] = useState("");
   const [ticketSold, setTicketSold] = useState(0);
   const [recentBets, setRecentBets] = useState([]);
-  const [acctBalance, setAcctBalance] = useState(0);
+  const [acctBalance, setAcctBalance] = useState({
+    0: 0,
+  });
   const [mostRecurring, setMostRecurring] = useState(0);
   const [filteredBetsHistory, setFilteredBetsHistory] = useState([]);
 
@@ -54,15 +56,8 @@ export default function AppProvider({ children }) {
     if (!walletAddress) return;
 
     const getAccountBalance = async () => {
-      const balance = await getBalance(walletAddress);
-      setAcctBalance(
-        isNaN(balance) ||
-          balance === Infinity ||
-          balance === -Infinity ||
-          balance === 0
-          ? 0
-          : balance
-      );
+      const balances = await getBalance(walletAddress);
+      if (balances) setAcctBalance(balances);
     };
 
     getAccountBalance();
@@ -70,6 +65,7 @@ export default function AppProvider({ children }) {
 
   useEffect(() => {
     if (!data) return;
+
     // Sum the ticket prices
     const ticketSum = data?.reduce((acc, curr) => {
       return (

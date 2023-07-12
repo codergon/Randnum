@@ -146,14 +146,16 @@
       width: 100px;
       max-width: 100px;
       justify-content: center;
+      img {
+        width: 17px;
+        height: 17px;
+        margin-bottom: 2px;
+      }
       svg {
         fill: $sub;
         width: 16px;
         height: 16px;
         margin-bottom: 2px;
-      }
-      p {
-        // min-width: 36px;
       }
       &.staked {
         gap: 7px;

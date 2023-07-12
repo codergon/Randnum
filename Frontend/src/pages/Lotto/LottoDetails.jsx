@@ -1,8 +1,10 @@
 import dayjs from "dayjs";
-import Icon from "../../components/common/Icon";
+import asalist from "../../constants/assets";
 
-const LottoDetails = ({ data, phase, withdrawalStart }) => {
+const LottoDetails = ({ data, phase, asset }) => {
   const dateProperties = ["ticketingStart", "withdrawalStart"];
+
+  const assetImg = asalist[Number(data.asset ?? 0)]?.logo?.svg;
 
   return (
     <>
@@ -12,55 +14,58 @@ const LottoDetails = ({ data, phase, withdrawalStart }) => {
             .filter(
               key => key !== "ticketingStart" && key !== "ticketingDuration"
             )
-            ?.map((key, ind) => (
-              <li className="bet-details__list-item" key={ind}>
-                <p className="key">
-                  {key === "maxPlayersAllowed"
-                    ? "Max Players"
-                    : key === "playersTicketBought"
-                    ? "Tickets Bought"
-                    : key === "playersTicketChecked"
-                    ? "Tickets Checked"
-                    : key === "withdrawalStart"
-                    ? phase === "withdrawal"
-                      ? "Withdrawal Started"
-                      : "Withdrawal Starts"
-                    : key?.split(/(?=[A-Z])/).join(" ")}
-                </p>
-
-                {key === "ticketFee" ? (
-                  <div className="amount-value">
-                    <Icon.AlgoRound />
-                    <p className="value">{data[key] / 1e6}</p>
-                  </div>
-                ) : key === "ticketingDuration" ? (
-                  <p className="value">{data[key] / 60 + " min"}</p>
-                ) : dateProperties.includes(key) ? (
-                  <p className="value">
-                    {dayjs(Number(data[key]) * 1000).format("HH:mm, MMM DD")}
+            ?.map((key, ind) => {
+              return (
+                <li className="bet-details__list-item" key={ind}>
+                  <p className="key">
+                    {key === "maxPlayersAllowed"
+                      ? "Max Players"
+                      : key === "playersTicketBought"
+                      ? "Tickets Bought"
+                      : key === "playersTicketChecked"
+                      ? "Tickets Checked"
+                      : key === "withdrawalStart"
+                      ? phase === "withdrawal"
+                        ? "Withdrawal Started"
+                        : "Withdrawal Starts"
+                      : key?.split(/(?=[A-Z])/).join(" ")}
                   </p>
-                ) : key !== "current-phase" ? (
-                  <p className="value">{data[key]}</p>
-                ) : (
-                  <div className="amount-value">
-                    <p
-                      className={`indicator indicator-${
-                        phase === "ticketing"
-                          ? "pending"
-                          : phase === "live"
-                          ? "success"
-                          : "inactive"
-                      }`}
-                      style={{
-                        textTransform: "capitalize",
-                      }}
-                    >
-                      {phase === "waiting" ? "Game starts soon" : phase}
+
+                  {key === "ticketFee" ? (
+                    <div className="amount-value">
+                      {asset && <p>lovely</p>}
+                      <img src={assetImg} alt="game asset" />
+                      <p className="value">{data[key] / 1e6}</p>
+                    </div>
+                  ) : key === "ticketingDuration" ? (
+                    <p className="value">{data[key] / 60 + " min"}</p>
+                  ) : dateProperties.includes(key) ? (
+                    <p className="value">
+                      {dayjs(Number(data[key]) * 1000).format("HH:mm, MMM DD")}
                     </p>
-                  </div>
-                )}
-              </li>
-            ))}
+                  ) : key !== "current-phase" ? (
+                    <p className="value">{data[key]}</p>
+                  ) : (
+                    <div className="amount-value">
+                      <p
+                        className={`indicator indicator-${
+                          phase === "ticketing"
+                            ? "pending"
+                            : phase === "live"
+                            ? "success"
+                            : "inactive"
+                        }`}
+                        style={{
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        {phase === "waiting" ? "Game starts soon" : phase}
+                      </p>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
 
           {!isNaN(data?.ticketingStart) && !isNaN(data?.ticketingDuration) && (
             <li className="bet-details__list-item">

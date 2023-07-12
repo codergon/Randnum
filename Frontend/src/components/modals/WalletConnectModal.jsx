@@ -44,7 +44,7 @@ const WalletConnectModal = ({ closeConnectModal }) => {
       <div className="connect-wallet-options">
         {[
           { type: "pera", name: "Pera wallet" },
-          { type: "myAlgo", name: "My Algo wallet", disabled: true },
+          { type: "myAlgo", name: "My Algo wallet", disabled: false },
         ].map((opt, index) => {
           return (
             <div

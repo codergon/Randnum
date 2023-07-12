@@ -1,7 +1,6 @@
 $main: #fff;
 $sub: #1e1e1e;
-$main: #efeee7;
-$main: #f1f1ef;
+// $main: #f1f1ef;
 $sub: #232323;
 
 $sans: "Alliance2", sans-serif;
@@ -11,4 +10,4 @@ $sansmed: "Alliance2 Medium", sans-serif;
 $sans1lgt: "Alliance1 Light", sans-serif;
 $sans1med: "Alliance1 Medium", sans-serif;
 
-$z-indexes: ("modal-loader", "modal", "modal-overlay", "base");
+$z-indexes: ("modal-loader", "modal", "modal-overlay", "menu", "base");

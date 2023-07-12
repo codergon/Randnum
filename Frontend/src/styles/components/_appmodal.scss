@@ -11,7 +11,6 @@
   background: $main;
   z-index: z("modal");
   flex-direction: column;
-
   &-overlay {
     top: 0;
     left: 0;
@@ -150,6 +149,12 @@
             svg {
               height: 9.5px;
               fill: #000;
+            }
+            img {
+              width: 12px;
+              height: 12px;
+              border-radius: 50%;
+              border: 0.5px solid rgba($color: $sub, $alpha: 0.4);
             }
           }
         }
@@ -294,6 +299,100 @@
           font-size: 13.4px;
           color: rgba($color: $sub, $alpha: 0.5);
         }
+
+        // ASSETS
+
+        &.assets {
+          font-size: 14px;
+          cursor: pointer;
+          position: relative;
+          flex-direction: column;
+          .key {
+            color: rgba($color: $sub, $alpha: 0.5);
+          }
+          .content {
+            width: 100%;
+            height: 100%;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+          }
+          .asset-list {
+            width: 100%;
+            max-height: 230px;
+            overflow: hidden;
+            overflow-y: auto;
+            background: #fff;
+            z-index: z("menu");
+            position: absolute;
+            border-radius: 12px;
+            top: calc(100% + 7px);
+            flex-direction: column;
+            border: 1px solid rgba($color: $sub, $alpha: 0.09);
+            .asset-item {
+              gap: 10px;
+              padding: 14px 14px;
+              align-items: center;
+              flex-direction: row;
+              &:not(:last-child) {
+                border-bottom: 1px solid rgba($color: $sub, $alpha: 0.09);
+              }
+              &:hover {
+                background: rgba($color: $sub, $alpha: 0.03);
+              }
+              img {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                border: 1px solid rgba($color: $sub, $alpha: 0.4);
+              }
+
+              .details {
+                flex: 1;
+                gap: 1px;
+                margin-left: 4px;
+                flex-direction: column;
+                p {
+                  font-size: 14px;
+                  text-align: start;
+                  &.sub {
+                    font-size: 12px;
+                    color: rgba($color: $sub, $alpha: 0.5);
+                  }
+                }
+              }
+            }
+          }
+        }
+        .asset-preview {
+          gap: 6px;
+          display: flex;
+          font-size: 13px;
+          flex-direction: row;
+          align-items: center;
+          font-family: $sans1med;
+          img {
+            width: 16px;
+            height: 16px;
+            margin-bottom: 2px;
+          }
+          p {
+            line-height: 1 !important;
+          }
+          .asset {
+            gap: 5px;
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+          }
+        }
+
+        img {
+          width: 16px;
+          height: 16px;
+          margin-bottom: 2px;
+        }
+
         .input-block {
           gap: 6px;
           flex: 1;
@@ -329,7 +428,7 @@
             max-width: calc(max(20%, 70px));
           }
           &.ticket {
-            gap: 10px;
+            gap: 8px;
             padding: 0px 10px 0px 13px;
             max-width: calc(max(20%, 80px));
           }

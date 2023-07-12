@@ -24,25 +24,32 @@
       }
       .amount-won,
       .amount-value {
-        gap: 6px;
+        img {
+          width: 17px;
+          height: 17px;
+          margin-bottom: 2px;
+        }
         svg {
           fill: $sub;
           width: 16px;
           height: 16px;
-          stroke: $sub;
-          stroke-width: 0.3px;
+          margin-bottom: 2px;
         }
         @extend %row-center;
         @extend %indicator;
       }
       .amount {
         gap: 6px;
+        img {
+          width: 17px;
+          height: 17px;
+          margin-bottom: 2px;
+        }
         svg {
           fill: $sub;
           width: 16px;
           height: 16px;
-          stroke: $sub;
-          stroke-width: 0.3px;
+          margin-bottom: 2px;
         }
         @extend %row-center;
       }

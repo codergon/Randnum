@@ -3,13 +3,15 @@ import millify from "millify";
 import Icon from "../common/Icon";
 import { useRecoilValue } from "recoil";
 import { MultiSigner } from "../../utils";
-import { useNetworkState } from "react-use";
-import { useEffect, useState } from "react";
+import { useClickAway, useNetworkState } from "react-use";
+import { useEffect, useState, useRef } from "react";
 import { SpinnerCircular } from "spinners-react";
 import { useApp } from "../../context/AppContext";
 import { Menu, MenuItem } from "@szhsin/react-menu";
 import { getMinAmountToStartGame } from "../../utils/helpers";
 import { addressAtom, providerAtom } from "../../atoms/appState";
+import asalist from "../../constants/assets";
+import { Check } from "lucide-react";
 
 const ticketingOptions = [
   "In 10 minutes",
@@ -34,7 +36,9 @@ const NewGameModal = ({ closeNewGameModal, refetchCurrentGame }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [assetId, setAssetId] = useState(0);
   const [ticketFee, setTicketFee] = useState(2);
+  const [viewAssets, setViewAssets] = useState(false);
   const [durationType, setDurationType] = useState("m");
   const [winMultiplier, setWinMultiplier] = useState(2);
   const [ticketingDuration, setTicketDuration] = useState(20);
@@ -42,6 +46,11 @@ const NewGameModal = ({ closeNewGameModal, refetchCurrentGame }) => {
   const [maxPlayersAllowed, setMaxPlayersAllowed] = useState(2);
   const [ticketingStart, setTicketStart] = useState("In 10 minutes");
   const [withdrawalStart, setWithdrawalStart] = useState("15 minutes after");
+
+  const assetsRef = useRef(null);
+  useClickAway(assetsRef, () => {
+    setViewAssets(false);
+  });
 
   const ticketingDateValue = () =>
     Math.round(
@@ -78,7 +87,7 @@ const NewGameModal = ({ closeNewGameModal, refetchCurrentGame }) => {
     (durationType === "m" ? ticketingDuration * 60 : ticketingDuration * 3600);
 
   const startNewGame = async () => {
-    if (acctBalance < gameCost) {
+    if (acctBalance[assetId] < gameCost) {
       setError("Insufficient balance!");
       return;
     }
@@ -87,6 +96,7 @@ const NewGameModal = ({ closeNewGameModal, refetchCurrentGame }) => {
     if (!address) return setError("Please connect your wallet first!");
 
     const params = {
+      assetId: Number(assetId),
       winMultiplier: winMultiplier < 0 ? 2 : winMultiplier,
       ticketFee: (ticketFee > 10 ? 10 : ticketFee < 0 ? 1 : ticketFee) * 1e6,
       ticketingDuration:
@@ -134,6 +144,11 @@ const NewGameModal = ({ closeNewGameModal, refetchCurrentGame }) => {
     }
   };
 
+  const updateAssetId = id => {
+    setAssetId(id);
+    setViewAssets(false);
+  };
+
   const handleDurationChange = (value = ticketingDuration) => {
     setTicketDuration(
       value > (durationType === "m" ? 60 : 6)
@@ -153,7 +168,7 @@ const NewGameModal = ({ closeNewGameModal, refetchCurrentGame }) => {
     // eslint-disable-next-line
   }, [durationType]);
 
-  // Calculate the minimum amount required to start a game
+  // Calculate the minimum amount required to start the game
   const [gameCost, setGameCost] = useState(0);
   useEffect(() => {
     if (!network?.online) return;
@@ -163,7 +178,8 @@ const NewGameModal = ({ closeNewGameModal, refetchCurrentGame }) => {
         isNaN(winMultiplier) || winMultiplier < 2 ? 2 : winMultiplier,
         isNaN(maxPlayersAllowed) || maxPlayersAllowed < 2
           ? 2
-          : maxPlayersAllowed
+          : maxPlayersAllowed,
+        assetId
       );
 
       setGameCost(cost);
@@ -171,7 +187,7 @@ const NewGameModal = ({ closeNewGameModal, refetchCurrentGame }) => {
 
     getMinCost();
     // eslint-disable-next-line
-  }, [winMultiplier, ticketFee, maxPlayersAllowed]);
+  }, [winMultiplier, ticketFee, maxPlayersAllowed, assetId]);
 
   return (
     <>
@@ -256,6 +272,66 @@ const NewGameModal = ({ closeNewGameModal, refetchCurrentGame }) => {
           </div>
         </div>
 
+        {/* Assets */}
+        <div className="new-game-input assets" ref={assetsRef}>
+          <button
+            className="content"
+            onClick={() => setViewAssets(!viewAssets)}
+          >
+            <p className="key">Game Asset</p>
+            <div className="asset-preview">
+              {asalist[Number(assetId)] && (
+                <div className="asset">
+                  <img
+                    src={
+                      asalist[Number(assetId)]?.logo?.svg ??
+                      asalist[Number(assetId)]?.logo?.png
+                    }
+                    alt="game asset"
+                  />
+                  <p>{asalist[Number(assetId)]?.unit_name}</p>
+                </div>
+              )}
+              <Icon.CaretDownBold size={9} color={"#23232380"} />
+            </div>
+          </button>
+
+          {viewAssets && (
+            <div className="asset-list">
+              {(Object.keys(acctBalance) || []).map((asset, index) => {
+                return (
+                  asalist[Number(asset)] && (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        updateAssetId(asset);
+                      }}
+                      className="asset-item"
+                    >
+                      <img
+                        src={
+                          asalist[Number(asset)]?.logo?.svg ??
+                          asalist[Number(asset)]?.logo?.png
+                        }
+                        alt=""
+                      />
+
+                      <div className="details">
+                        <p className="main">{asalist[Number(asset)]?.name}</p>
+                        <p className="sub">
+                          {asalist[Number(asset)]?.unit_name}
+                        </p>
+                      </div>
+
+                      {Number(assetId) === Number(asset) && <Check size={14} />}
+                    </button>
+                  )
+                );
+              })}
+            </div>
+          )}
+        </div>
+
         <div className="new-game-input">
           <label htmlFor="ticketFee">Ticket Fee</label>
           <div className="input-block ticket">
@@ -279,7 +355,15 @@ const NewGameModal = ({ closeNewGameModal, refetchCurrentGame }) => {
               }
             />
             <div style={{ paddingBottom: 2 }}>
-              <Icon.AlgoRound size={15} />
+              {asalist[Number(assetId)] && (
+                <img
+                  src={
+                    asalist[Number(assetId)]?.logo?.svg ??
+                    asalist[Number(assetId)]?.logo?.png
+                  }
+                  alt="game asset"
+                />
+              )}
             </div>
           </div>
         </div>
@@ -438,9 +522,17 @@ const NewGameModal = ({ closeNewGameModal, refetchCurrentGame }) => {
             <p className="key">Account balance: </p>
 
             <div className="amount">
-              <Icon.Algo size={15} />
+              {asalist[Number(assetId)] && (
+                <img
+                  src={
+                    asalist[Number(assetId)]?.logo?.svg ??
+                    asalist[Number(assetId)]?.logo?.png
+                  }
+                  alt="game asset"
+                />
+              )}
               <p className="value">
-                {millify(acctBalance, {
+                {millify(acctBalance[assetId], {
                   precision: 2,
                 })}
               </p>
@@ -448,13 +540,21 @@ const NewGameModal = ({ closeNewGameModal, refetchCurrentGame }) => {
           </div>
           <div
             className={`calculations-row ${
-              gameCost < acctBalance ? "valid" : "error"
+              gameCost < acctBalance[assetId] ? "valid" : "error"
             }`}
           >
             <p className="key">Min amount required: </p>
 
             <div className="amount">
-              <Icon.Algo size={15} />
+              {asalist[Number(assetId)] && (
+                <img
+                  src={
+                    asalist[Number(assetId)]?.logo?.svg ??
+                    asalist[Number(assetId)]?.logo?.png
+                  }
+                  alt="game asset"
+                />
+              )}
               <p className="value">{gameCost}</p>
             </div>
           </div>

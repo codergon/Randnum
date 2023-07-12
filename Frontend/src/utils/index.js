@@ -1,5 +1,5 @@
 import algosdk, { waitForConfirmation } from "algosdk";
-import { ALGOD_CLIENT } from "./constants";
+import { ALGOD_CLIENT } from "../constants";
 import MyAlgoWallet from "@randlabs/myalgo-connect";
 import { PeraWalletConnect } from "@perawallet/connect";
 
@@ -54,6 +54,14 @@ export class MyAlgo {
     this.client = ALGOD_CLIENT[network];
   }
 
+  async disconnect() {
+    try {
+      localStorage.clear("recoil-persist");
+    } catch (error) {
+      //
+    }
+  }
+
   async connect() {
     try {
       const accounts = await this.wallet.connect({
@@ -88,7 +96,7 @@ export const MultiSigner = async (txns, provider) => {
 
     const blobArray = signedTxns.map(item => item.blob);
 
-    const submittedTxn = ALGOD_CLIENT["testnet"]
+    const submittedTxn = await ALGOD_CLIENT["testnet"]
       .sendRawTransaction(blobArray)
       .do();
 

@@ -6,6 +6,7 @@ import { constrictAddr } from "../../utils/helpers";
 import EmptyState from "../common/EmptyState";
 import Icon from "../common/Icon";
 import { Link } from "react-router-dom";
+import asalist from "../../constants/assets";
 
 const BetHistoryDetails = ({ bet, closeHistoryTab }) => {
   const { fetching, errorHistory } = useApp();
@@ -48,6 +49,26 @@ const BetHistoryDetails = ({ bet, closeHistoryTab }) => {
               <p className="value">{constrictAddr(bet?._id)}</p>
             </li>
 
+            <li className="bet-details__list-item">
+              <p className="key">Game Asset</p>
+              <div className="amount">
+                {!isNaN(gameParams?.game_asset) &&
+                  (asalist[Number(gameParams?.game_asset)]?.logo?.svg ||
+                    asalist[Number(gameParams?.game_asset)]?.logo?.png) && (
+                    <img
+                      src={
+                        asalist[Number(gameParams?.game_asset)]?.logo?.svg ??
+                        asalist[Number(gameParams?.game_asset)]?.logo?.png
+                      }
+                      alt="game asset"
+                    />
+                  )}
+                <p className="value">
+                  {asalist[Number(gameParams?.game_asset)]?.unit_name ?? "N/A"}
+                </p>
+              </div>
+            </li>
+
             {Object.keys(gameParams)?.map((key, index) => {
               return (
                 <li className="bet-details__list-item" key={index}>
@@ -86,7 +107,20 @@ const BetHistoryDetails = ({ bet, closeHistoryTab }) => {
                     </p>
                   ) : (
                     <div className="amount">
-                      <Icon.AlgoRound />
+                      {!isNaN(gameParams?.game_asset) &&
+                        (asalist[Number(gameParams?.game_asset)]?.logo?.svg ||
+                          asalist[Number(gameParams?.game_asset)]?.logo
+                            ?.png) && (
+                          <img
+                            src={
+                              asalist[Number(gameParams?.game_asset)]?.logo
+                                ?.svg ??
+                              asalist[Number(gameParams?.game_asset)]?.logo?.png
+                            }
+                            alt=""
+                          />
+                        )}
+
                       <p className="indicator indicator-success">
                         {millify(gameParams?.ticketFee / 1e6, {
                           precision: 1,
